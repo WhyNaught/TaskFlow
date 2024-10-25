@@ -1,0 +1,1 @@
+TaskFlow is a collaborative full-stack task management app developed using React + Vite for the frontend, express for server routing, node.js for the runtime environment, and mongoDB for data storage. 
