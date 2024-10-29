@@ -5,6 +5,7 @@ const router = require('../server/routes/authrouter');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
 require('dotenv').config();
 let port; 
 
@@ -27,5 +28,8 @@ app.listen(port, 'localhost', () => {
 })
 
 // linking app to express router
+app.use(cors({
+    origin: 'http://localhost:5173', 
+})); // allows server to connect to frontend
 app.use(express.json()); // allows app to parse json data
 app.use(router);

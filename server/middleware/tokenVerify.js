@@ -4,7 +4,7 @@ require('dotenv').config();
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
     if (!token) {
-        res.status(401).json({error: 'Unauthorized'});
+        return res.status(401).json({error: 'Unauthorized'});
     };
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
         if (err) {

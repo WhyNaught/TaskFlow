@@ -9,7 +9,7 @@ require('dotenv').config();
 
 // TaskFlow homepage
 router.get('/', async (req, res) => {
-    res.send('Homepage');
+    res.send('Welcome to TaskFlow');
 })
 
 // Get route for registation homepage
@@ -29,7 +29,8 @@ router.post('/api/register', async (req, res) => {
         console.log(error);
     };
 
-    const hp = await bcrypt.hash(req.body.password, bcrypt.genSalt()); // hp = hashed password
+    const salt = bcrypt.genSalt(10);
+    const hp = await bcrypt.hash(req.body.password, parseInt(salt)); // hp = hashed password
 
     // if everything works out, create the new user 
     const newUser = new User ({
