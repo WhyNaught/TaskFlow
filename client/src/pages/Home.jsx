@@ -1,11 +1,8 @@
-import {useState} from 'react'; 
-import axios from 'axios'; 
-import Authentication from '../Authentication.jsx';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
-export default function Home({endpoint}) {
-    const username = 'placeholder'; 
-    if (Authentication(endpoint)) {
+export default function Home({username, email, authenticated}) {
+    
+    if (authenticated) {
         return (
             <>
                 <h2>Welcome Back to TaskFlow </h2>
