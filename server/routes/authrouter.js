@@ -88,6 +88,12 @@ router.post('/api/logout', (req, res) => {
     res.status(200).json({message: 'Logged out successfully!'});
 });
 
+// retrieves the user's username and email based on their token 
+router.get('/api/data', tokenVerify, async (req, res) => {
+    const {username, email} = req.user; 
+    res.status(200).json({username, email});
+});
+
 // checks if the user is logged in with a valid token using token verify and then retrieves the relevant JSX markup
 router.get('/api/user', tokenVerify, async (req, res) => {
     try {

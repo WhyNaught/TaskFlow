@@ -14,13 +14,17 @@ function About() {
 // renders the navbar and all the browser routes
 function App() {
     const [authenticated, setAuthenticated] = useState(false);
+    const [userData, setUserData] = useState(null); 
     useEffect(() => {
       axios.get('http://localhost:3000/api/user', {withCredentials: true})
         .then(response => {
-          if (response.status === 200) {
-            setAuthenticated(true);
-          }
-        }).catch(error => {setAuthenticated(false);});
+          setUserData(response.data);
+          setAuthenticated(true); 
+        })
+        .catch(error => {
+          console.error('Error fetching user data', error);
+          setAuthenticated(false);
+        });
     }, []);
     return (
         <Router>
@@ -28,7 +32,7 @@ function App() {
                 <Link to="/">Home</Link> | <Link to="/register">Register</Link> | <Link to="/about">About</Link> | <Link to="/login">Login</Link>
             </nav>
             <Routes>
-                <Route path="/" element={<Home endpoint = "http://localhost:3000/api/user"/>} />
+                <Route path="/" element={<Home username = {userData ? userData.username : null} authenticated={authenticated}/>} />
                 <Route path="/register" element={<Register endpoint="http://localhost:3000/api/register" />} />
                 <Route path="/about" element={<About />} />
                 <Route path='/login' element = {<Login endpoint="http://localhost:3000/api/login"/>}/>
