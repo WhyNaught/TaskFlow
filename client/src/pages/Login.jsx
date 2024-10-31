@@ -13,7 +13,7 @@ export default function Login ({endpoint}) {
             const response = await axios.post(endpoint, {
                 password, 
                 email
-            });
+            }, {withCredentials: true});
             setLoggedin(true);
         } catch (err) {
             setError(err); 

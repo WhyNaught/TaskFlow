@@ -16,7 +16,7 @@ export default function Registration({ endpoint }) {
                 username,
                 password,
                 email
-            }); 
+            }, {withCredentials: true}); 
             setRegistered(true); 
         } catch (err) {
             setError(err.message);

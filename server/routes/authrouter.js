@@ -5,6 +5,7 @@ const User = require('../schemas/userSchema');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenVerify = require('../middleware/tokenVerify');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // TaskFlow homepage
@@ -29,7 +30,7 @@ router.post('/api/register', async (req, res) => {
         console.log(error);
     };
 
-    const salt = bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hp = await bcrypt.hash(req.body.password, parseInt(salt)); // hp = hashed password
 
     // if everything works out, create the new user 
@@ -42,11 +43,18 @@ router.post('/api/register', async (req, res) => {
     // save to database
     try {
         await newUser.save();
+        const token = jwt.sign({email: newUser.email}, process.env.SIGNATURE, {expiresIn : '1h'});
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true, 
+            sameSite: 'Strict',
+            maxAge: 3600000
+        });
         res.status(201).json({message: 'User registered successfully!'});
     } catch (error) {
         res.status(500).json({error: 'Internal server error, please try again later.'})
     }
-    
+
 });
 
 // login post route
@@ -61,11 +69,23 @@ router.post('/api/login', async (req, res) => {
             return res.status(401).json({message: 'Incorrect email or password'});
         }
         const token = jwt.sign({email: user.email}, process.env.SIGNATURE); 
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true, 
+            sameSite: 'Strict',
+            maxAge: 3600000
+        });
         res.status(200).json({token});
     } catch (error) {
         res.status(500).json({error: 'Internal server error, please try again later.'});
     }
     
+});
+
+// allows user to logout 
+router.post('/api/logout', (req, res) => {
+    res.clearCookie('token');
+    res.status(200).json({message: 'Logged out successfully!'});
 });
 
 // checks if the user is logged in with a valid token using token verify and then retrieves the relevant JSX markup
