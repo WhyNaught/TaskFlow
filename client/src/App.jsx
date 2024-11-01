@@ -29,7 +29,7 @@ function App() {
     return (
         <Router>
             <nav>
-                <Link to="/">Home</Link> | <Link to="/register">Register</Link> | <Link to="/about">About</Link> | <Link to="/login">Login</Link>
+                <Link to="/">Home</Link> | <Link to="/register">Register</Link> | <Link to="/about">About</Link> | <Link to="/login">Login</Link> 
             </nav>
             <Routes>
                 <Route path="/" element={<Home username = {userData ? userData.username : null} authenticated={authenticated}/>} />
