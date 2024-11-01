@@ -2,6 +2,7 @@ import React from 'react';
 import Register from '../src/pages/Register';
 import Login from '../src/pages/Login';
 import Home from '../src/pages/Home'; 
+import TaskFlows from '../src/pages/TaskFlows';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/register" element={<Register endpoint="http://localhost:3000/api/register" />} />
                 <Route path="/about" element={<About />} />
                 <Route path='/login' element = {<Login endpoint="http://localhost:3000/api/login"/>}/>
+                <Route path='/taskflows' element = {<TaskFlows/>}/>
             </Routes>
         </Router>
     );
