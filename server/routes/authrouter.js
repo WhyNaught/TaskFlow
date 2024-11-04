@@ -13,11 +13,6 @@ router.get('/', async (req, res) => {
     res.send('Welcome to TaskFlow');
 })
 
-// Get route for registation homepage
-router.get('/register', async (req, res) => {
-    res.send('Registration');
-})
-
 // Post route for registration
 router.post('/api/register', async (req, res) => {
     // check to see if user already exists in our database
