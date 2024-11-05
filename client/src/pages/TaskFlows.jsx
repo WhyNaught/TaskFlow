@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import axios from 'axios'; 
 import {useState, useEffect} from 'react'; 
+import {Redirect} from 'react-router-dom'; 
 
-function Navlink({endpoint, label}) {
+function Navlink({endpoint, label, authenticated}) {
     return (
         <li>
             <Link to = {endpoint}>
@@ -14,6 +15,9 @@ function Navlink({endpoint, label}) {
 
 export default function TaskFlows () {
     const [flows, setFlows] = useState(null); 
+    if (!authenticated) {
+        return (<Redirect to="/"/>)
+    }
     if (!flows) {
         return (
             <>

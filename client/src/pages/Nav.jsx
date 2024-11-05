@@ -14,7 +14,7 @@ export default function Nav () {
     return (
         <ul>
             <Navlink endpoint = "/taskflows" label = "My TaskFlows" />
-            <Navlink endpoint = "/create-new" label = "Create New TaskFlow" />
+            <Navlink endpoint = "/taskflows/create" label = "Create New TaskFlow" />
             <Navlink endpoint = "/settings" label = "Settings" />
         </ul>
     );
