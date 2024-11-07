@@ -5,13 +5,7 @@ const User = require('../schemas/userSchema');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenVerify = require('../middleware/tokenVerify');
-const cookieParser = require('cookie-parser');
 require('dotenv').config();
-
-// TaskFlow homepage
-router.get('/', async (req, res) => {
-    res.send('Welcome to TaskFlow');
-})
 
 // Post route for registration
 router.post('/api/register', async (req, res) => {
