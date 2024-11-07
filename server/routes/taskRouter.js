@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../schemas/userSchema');
 const mongoose = require('mongoose');
-
-// get request to retrieve user taskflows 
+const tokenVerify = require('../middleware/tokenVerify'); 
 
 // post request to add user tasks to database when created 
 router.post('/api/user/create', async (req, res) => {
@@ -38,6 +37,21 @@ router.post('/api/user/create', async (req, res) => {
         console.error('Error adding a new TaskFlow', err);
         res.status(500).json({error: "An error occurred while adding the TaskFlow"});  
     }; 
+});
+
+// get request to retrieve user taskflows
+router.get('/api/user/taskflows', tokenVerify, async (req, res) => {
+    const {username, email} = req.query; 
+    try {
+        const user = await User.findOne({username: username, email: email}); 
+        if (!user) {
+            return res.status(404).json({error: "User not found"}); 
+        };
+        res.json({taskflows: user.taskflows}); 
+    } catch (err) {
+        console.error('Error retrieving user TaskFlows', err); 
+        res.status(500).json({error: "An error occured while retrieving your TaskFlows"}); 
+    };
 });
 
 module.exports = router; 

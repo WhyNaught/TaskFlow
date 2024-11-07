@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import axios from 'axios'; 
 import {useState, useEffect} from 'react'; 
-import {Redirect} from 'react-router-dom'; 
+import {Navigate} from 'react-router-dom'; 
 
-function Navlink({endpoint, label, authenticated}) {
+function Navlink({endpoint, label}) {
     return (
         <li>
             <Link to = {endpoint}>
@@ -13,33 +13,28 @@ function Navlink({endpoint, label, authenticated}) {
     );
 };
 
-export default function TaskFlows () {
-    const [flows, setFlows] = useState(null); 
+export default function TaskFlows ({authenticated, flows}) {
     if (!authenticated) {
-        return (<Redirect to="/"/>)
-    }
-    if (!flows) {
+        return <Navigate to="/"/>
+    }; 
+    if (flows.length === 0) {
         return (
             <>
                 <h2>You don't have any TaskFlows</h2>
-                <Navlink endpoint = "/create-new" label = "Create a new TaskFlow here"/>
+                <Navlink endpoint = "/create" label = "Create a new TaskFlow here"/>
             </>
-        ); 
+        )
     } else {
         return (
-            <div>
-                <h2>Your TaskFlows:</h2>
-                <ul>
-                    {flows.map(function(flow) {
-                        return (
-                            <li key = {flow.id}>
-                                <p>{flow.name}</p>
-                                <p>{flow.creator}</p>
-                            </li>
-                        )
-                    })};
-                </ul>
-            </div>            
-        )
-    };
+            <ul>
+                {flows.map((flow) => (
+                    <li key={flow.id}>
+                        <p>{flow.name}</p>
+                        <p>{flow.author}</p>
+                    </li>
+                ))}
+            </ul>
+        ); 
+    }
+     
 };

@@ -9,7 +9,6 @@ export default function Create({endpoint, username, authenticated}) {
 
     async function handleSubmit (e) {
         e.preventDefault();
-
         try {
             await axios.post(endpoint, {
                 name: name,
