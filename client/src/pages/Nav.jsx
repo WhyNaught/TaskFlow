@@ -10,12 +10,12 @@ function Navlink({endpoint, label}) {
     );
 };
 
-export default function Nav () {
+export default function Nav ({id}) {
     return (
         <ul>
-            <Navlink endpoint = "/taskflows" label = "My TaskFlows" />
-            <Navlink endpoint = "/taskflows/create" label = "Create New TaskFlow" />
-            <Navlink endpoint = "/settings" label = "Settings" />
+            <Navlink endpoint = {`/${id}/taskflows`} label = "My TaskFlows" />
+            <Navlink endpoint = {`/${id}/taskflows/create`} label = "Create New TaskFlow" />
+            <Navlink endpoint = {`/${id}/settings`} label = "Settings" />
         </ul>
     );
 };

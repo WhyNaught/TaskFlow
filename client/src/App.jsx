@@ -17,7 +17,7 @@ function About() {
 function App() {
     const [authenticated, setAuthenticated] = useState(false);
     const [userData, setUserData] = useState(null); 
-    const [flows, setFlows] = useState([]); 
+    const [taskFlows, setTaskFlows] = useState([]); 
     useEffect(() => {
         axios.get('http://localhost:3000/api/user', { withCredentials: true })
           .then(response => {
@@ -41,7 +41,7 @@ function App() {
                 }
             })
             .then(response => {
-              setFlows(response.data.taskflows); 
+              setTaskFlows(response.data.taskflows); 
             })
             .catch(error => {
               console.error('Error fetching taskflows data', error);
@@ -54,12 +54,12 @@ function App() {
                 <Link to="/">Home</Link> | <Link to="/register">Register</Link> | <Link to="/about">About</Link> | <Link to="/login">Login</Link> 
             </nav>
             <Routes>
-                <Route path="/" element={<Home username = {userData ? userData.username : null} authenticated={authenticated}/>} />
+                <Route path="/" element={<Home username = {userData ? userData.username : null} authenticated={authenticated} id = {userData ? userData.username : null}/>} />
                 <Route path="/register" element={<Register endpoint="http://localhost:3000/api/register" />} />
                 <Route path="/about" element={<About />} />
                 <Route path='/login' element = {<Login endpoint="http://localhost:3000/api/login"/>}/>
-                <Route path='/taskflows' element = {<TaskFlows authenticated={authenticated} flows = {flows ? flows : []}/>}/>
-                <Route path='/taskflows/create' element = {<Create username = {userData? userData.username : null} endpoint = "http://localhost:3000/api/user/create" authenticated={authenticated}/>}/>
+                <Route path='/:username/taskflows' element = {<TaskFlows username = {userData? userData.username : null} authenticated = {authenticated} taskflows = {taskFlows}/>}/>
+                <Route path='/:username/taskflows/create' element = {<Create username = {userData? userData.username : null} endpoint = "http://localhost:3000/api/user/create" authenticated={authenticated}/>}/>
             </Routes>
         </Router>
     );

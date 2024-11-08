@@ -1,7 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import axios from 'axios'; 
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import {useState, useEffect} from 'react'; 
-import {Navigate} from 'react-router-dom'; 
 
 function Navlink({endpoint, label}) {
     return (
@@ -13,11 +11,12 @@ function Navlink({endpoint, label}) {
     );
 };
 
-export default function TaskFlows ({authenticated, flows}) {
+export default function TaskFlows ({authenticated, taskflows, username}) {
+    const location = useLocation(); 
     if (!authenticated) {
         return <Navigate to="/"/>
     }; 
-    if (flows.length === 0) {
+    if (taskflows.length === 0) {
         return (
             <>
                 <h2>You don't have any TaskFlows</h2>
@@ -26,15 +25,19 @@ export default function TaskFlows ({authenticated, flows}) {
         )
     } else {
         return (
-            <ul>
-                {flows.map((flow) => (
-                    <li key={flow.id}>
-                        <p>{flow.name}</p>
-                        <p>{flow.author}</p>
-                    </li>
-                ))}
-            </ul>
+            <>
+                <h2>{username}'s taskflows</h2>
+                <ul>
+                    {taskflows.map((taskflow) => (
+                        <li key={taskflow.id}>
+                            <Link to = {`/${username}/${taskflow.id}`}>
+                                <button>{taskflow.name}</button>
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            </>
         ); 
-    }
+    }; 
      
 };
