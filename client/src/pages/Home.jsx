@@ -1,13 +1,13 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Nav from '../pages/Nav';
 
-export default function Home({username, authenticated}) {
+export default function Home({username, authenticated, id}) {
     
     if (authenticated) {
         return (
             <>
                 <h2>Welcome Back to TaskFlow {username}!</h2>
-                <Nav />
+                <Nav id = {id}/>
             </>
         )
     } else {
