@@ -7,6 +7,7 @@ import Create from '../src/pages/Create';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import TaskFlow from './pages/TaskFlow';
 
 // will make dedicated file for this later 
 function About() {
@@ -60,6 +61,7 @@ function App() {
                 <Route path='/login' element = {<Login endpoint="http://localhost:3000/api/login"/>}/>
                 <Route path='/:username/taskflows' element = {<TaskFlows username = {userData? userData.username : null} authenticated = {authenticated} taskflows = {taskFlows}/>}/>
                 <Route path='/:username/taskflows/create' element = {<Create username = {userData? userData.username : null} endpoint = "http://localhost:3000/api/user/create" authenticated={authenticated}/>}/>
+                <Route path='/:username/taskflows/:taskflowId' element = {< TaskFlow taskflows = {taskFlows} authenticated = {authenticated}/>}/>
             </Routes>
         </Router>
     );

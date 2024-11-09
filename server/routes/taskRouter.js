@@ -8,6 +8,7 @@ const tokenVerify = require('../middleware/tokenVerify');
 router.post('/api/user/create', async (req, res) => {
     const {name, description, username} = req.body; 
 
+    // fix this ASAP to use the new schema
     try {
         const result = await User.updateOne({username: username}, 
             {
@@ -18,11 +19,9 @@ router.post('/api/user/create', async (req, res) => {
                     description: description,
                     author: username, 
                     dob: new Date().toISOString(), 
-                    order: 1,
-                    pending: true,
-                    doing: false,
-                    done: false,
-                    deadline: '',
+                    pending: [],
+                    doing: [],
+                    done: [],
                     collaborators: [] 
                 }
             }

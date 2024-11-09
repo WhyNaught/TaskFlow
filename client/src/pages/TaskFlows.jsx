@@ -20,7 +20,7 @@ export default function TaskFlows ({authenticated, taskflows, username}) {
         return (
             <>
                 <h2>You don't have any TaskFlows</h2>
-                <Navlink endpoint = "/create" label = "Create a new TaskFlow here"/>
+                <Navlink endpoint = {`/${username}/taskflows/create`} label = "Create a new TaskFlow here"/>
             </>
         )
     } else {
@@ -30,7 +30,7 @@ export default function TaskFlows ({authenticated, taskflows, username}) {
                 <ul>
                     {taskflows.map((taskflow) => (
                         <li key={taskflow.id}>
-                            <Link to = {`/${username}/${taskflow.id}`}>
+                            <Link to = {`/${username}/taskflows/${taskflow.id}`}>
                                 <button>{taskflow.name}</button>
                             </Link>
                         </li>
