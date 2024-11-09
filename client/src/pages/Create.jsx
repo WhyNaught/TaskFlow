@@ -1,3 +1,4 @@
+import {Navigate} from 'react-router-dom'; 
 import {useState, useEffect} from 'react'; 
 import axios from 'axios'; 
 
@@ -21,14 +22,23 @@ export default function Create({endpoint, username, authenticated}) {
             console.log(err); 
         }; 
     };
-    
-    return (
-        <div>
-            <form onSubmit = {handleSubmit}>
-                <input type = 'text' required value = {name} placeholder='Task Name' onChange = {(e) => setName(e.target.value)}></input>
-                <input type = 'text' value = {desc} placeholder='Task Description' onChange = {(e) => setDesc(e.target.value)}></input>
-                <button type = 'submit' >Create new task!</button>
-            </form>
-        </div>
-    );
+
+    if (!authenticated) {
+        <Navigate to="/"/>
+    }
+    if (!created) {
+        return (
+            <div>
+                <form onSubmit = {handleSubmit}>
+                    <input type = 'text' required value = {name} placeholder='Task Name' onChange = {(e) => setName(e.target.value)}></input>
+                    <input type = 'text' value = {desc} placeholder='Task Description' onChange = {(e) => setDesc(e.target.value)}></input>
+                    <button type = 'submit' >Create new task!</button>
+                </form>
+            </div>
+        );
+    } else {
+        return (
+            <Navigate to = {`/${username}/taskflows`} />
+        );
+    };
 };
