@@ -11,28 +11,51 @@ import TaskFlow from './pages/TaskFlow';
 
 // will make dedicated file for this later 
 function About() {
-    return <h2>About Page</h2>;
-}
+    return (
+      <div>
+        <h2>About Page</h2>
+        <p>TaskFlow is a collaborative full-stack task management app developed using React + Vite for the frontend, express for server routing, node.js for the runtime environment, and mongoDB for data storage.</p>
+      </div>
+    );
+};
 
 // renders the navbar and all the browser routes
 function App() {
-    const [authenticated, setAuthenticated] = useState(false); // consider changing this to just checking the token each time
-    const [userData, setUserData] = useState(null); 
+    const [authenticated, setAuthenticated] = useState(() => {
+        return localStorage.getItem('isAuthenticated') === 'true';
+    });
+    const [userData, setUserData] = useState(() => {
+      const data = localStorage.getItem('userData');
+      return data ? JSON.parse(data) : null;
+    });
     const [taskFlows, setTaskFlows] = useState([]); 
-    useEffect(() => {
-        axios.get('http://localhost:3000/api/user', { withCredentials: true })
-          .then(response => {
-            setUserData(response.data);
-            setAuthenticated(true);  
-          })
-          .catch(error => {
-            console.error('Error fetching user data', error);
-            setAuthenticated(false);
-          });
-      }, []);
+    const [loading, setLoading] = useState(true); 
+      useEffect(() => {
+          const fetchData = async () => {
+            try {
+              const user = await axios.get('http://localhost:3000/api/user', {withCredentials: true}); 
+              setUserData(user.data);
+              setAuthenticated(true); 
+              localStorage.setItem('isAuthenticated', 'true'); 
+              localStorage.setItem('userData', JSON.stringify(user.data)); 
+            } catch (err) {
+              console.error('Error fetching user data', err); 
+              setAuthenticated(false); 
+              localStorage.removeItem('isAuthenticated'); 
+              localStorage.removeItem('userData'); 
+            } finally {
+              setLoading(false); 
+            }
+          }
+          if (authenticated && !userData) {
+            fetchData(); 
+          } else {
+            setLoading(false); 
+          }; 
+      }, [authenticated, userData]);
       
       useEffect(() => {
-        if (authenticated) {
+        if (authenticated && userData) {
           axios.get('http://localhost:3000/api/user/taskflows', 
             { 
                 withCredentials: true, 
@@ -48,8 +71,11 @@ function App() {
               console.error('Error fetching taskflows data', error);
             });
         }
-      }, [authenticated]);
-    return (
+      }, [authenticated, userData]);
+    if (loading) {
+      return (<div>Loading...</div>); 
+    } else {
+      return (
         <Router>
             <nav>
                 <Link to="/">Home</Link> | <Link to="/register">Register</Link> | <Link to="/about">About</Link> | <Link to="/login">Login</Link> 
@@ -66,6 +92,7 @@ function App() {
             </Routes>
         </Router>
     );
+    }
 }
 
 // exports our app to our main.jsx file

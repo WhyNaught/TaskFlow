@@ -4,8 +4,8 @@ import axios from 'axios';
 
 export default function TaskFlow({taskflows, authenticated}) {
     const {username, taskflowId} = useParams();
-    const [modal, setModal] = useState(false); // pop up form logic 
     const endpoint = `http://localhost:3000/api/user/save/${username}/${taskflowId}`;
+    const [modal, setModal] = useState(false); // pop up form logic 
     const [newTask, setNewTask] = useState({ // just the task schema 
         id: '',
         name: '', 
@@ -23,7 +23,7 @@ export default function TaskFlow({taskflows, authenticated}) {
     const [closed, setClosed] = useState(taskflow.closed ? taskflow.closed : []); 
 
     async function handleSaveChange(e) {
-        e.preventDefault();
+        e.preventDefault(); 
         await axios.patch(endpoint, {
             pending: pending, 
             doing: doing, 
@@ -44,6 +44,20 @@ export default function TaskFlow({taskflows, authenticated}) {
             category: category           
         });
         setModal(true); 
+    };
+
+    function deleteTask(id, category) {
+        console.log(id); 
+        if (category === 'pending') {
+            const newPending = pending.filter(task => task.id !== id)
+            setPending(newPending); 
+        } else if (category === 'doing') {
+            const newDoing = doing.filter(task => task.id !== id);
+            setDoing(newDoing); 
+        } else if (category === 'closed') {
+            const newClosed = closed.filter(task => task.id !== id);
+            setClosed(newClosed); 
+        };
     };
 
     function handleChange(e) {
@@ -77,6 +91,8 @@ export default function TaskFlow({taskflows, authenticated}) {
                         <li key = {task.id}>
                             <p>{task.name}</p>
                             <p>{task.description}</p>
+                            <button>Edit Task</button>
+                            <button onClick = {() => deleteTask(task.id, 'pending')}>Delete Task</button>
                         </li>
                     ))}
                 </ul>
@@ -87,16 +103,20 @@ export default function TaskFlow({taskflows, authenticated}) {
                         <li key = {task.id}>
                             <p>{task.name}</p>
                             <p>{task.description}</p>
+                            <button>Edit Task</button>
+                            <button onClick = {() => deleteTask(task.id, 'doing')}>Delete Task</button>
                         </li>
                     ))}
                 </ul>
                 <button onClick = {() => handleClick('doing')}>Add doing</button>
                 <h3>Closed tasks</h3>
-                <ul>
+                <ul> 
                     {closed.map(task => (
                         <li key = {task.id}>
                             <p>{task.name}</p>
                             <p>{task.description}</p>
+                            <button>Edit Task</button>
+                            <button onClick = {() => deleteTask(task.id, 'closed')}>Delete Task</button>
                         </li>
                     ))}
                 </ul>
