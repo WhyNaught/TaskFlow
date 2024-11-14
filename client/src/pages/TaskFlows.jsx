@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
-import {useState, useEffect} from 'react'; 
+import {useState} from 'react'; 
 
 function Navlink({endpoint, label}) {
     return (
@@ -11,8 +11,9 @@ function Navlink({endpoint, label}) {
     );
 };
 
-export default function TaskFlows ({authenticated, taskflows, username}) {
-    const location = useLocation(); 
+export default function TaskFlows ({authenticated, taskflows, username}) { // the refresh thing should fix using useContext
+    const [modal, setModal] = useState(false);
+
     if (!authenticated) {
         return <Navigate to="/"/>
     }; 
@@ -33,6 +34,7 @@ export default function TaskFlows ({authenticated, taskflows, username}) {
                             <Link to = {`/${username}/taskflows/${taskflow.id}`}>
                                 <button>{taskflow.name}</button>
                             </Link>
+                            <button>⚙️</button>
                         </li>
                     ))}
                 </ul>
