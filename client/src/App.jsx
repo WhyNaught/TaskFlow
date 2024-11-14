@@ -16,7 +16,7 @@ function About() {
 
 // renders the navbar and all the browser routes
 function App() {
-    const [authenticated, setAuthenticated] = useState(false);
+    const [authenticated, setAuthenticated] = useState(false); // consider changing this to just checking the token each time
     const [userData, setUserData] = useState(null); 
     const [taskFlows, setTaskFlows] = useState([]); 
     useEffect(() => {
@@ -62,6 +62,7 @@ function App() {
                 <Route path='/:username/taskflows' element = {<TaskFlows username = {userData? userData.username : null} authenticated = {authenticated} taskflows = {taskFlows}/>}/>
                 <Route path='/:username/taskflows/create' element = {<Create username = {userData? userData.username : null} endpoint = "http://localhost:3000/api/user/create" authenticated={authenticated}/>}/>
                 <Route path='/:username/taskflows/:taskflowId' element = {< TaskFlow taskflows = {taskFlows} authenticated = {authenticated}/>}/>
+                {/* Make sure to add in the route for the shared-with-me page and its respective component */}
             </Routes>
         </Router>
     );

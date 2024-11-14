@@ -16,6 +16,7 @@ export default function Nav ({id}) {
             <Navlink endpoint = {`/${id}/taskflows`} label = "My TaskFlows" />
             <Navlink endpoint = {`/${id}/taskflows/create`} label = "Create New TaskFlow" />
             <Navlink endpoint = {`/${id}/settings`} label = "Settings" />
+            <Navlink endpoint = {`/${id}/shared-with-me`} label = 'Shared with me'></Navlink>
         </ul>
     );
 };

@@ -1,14 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../schemas/userSchema');
-const mongoose = require('mongoose');
-const tokenVerify = require('../middleware/tokenVerify'); 
 
 // post request to add user tasks to database when created 
 router.post('/api/user/create', async (req, res) => {
     const {name, description, username} = req.body; 
-
-    // fix this ASAP to use the new schema
     try {
         const result = await User.updateOne({username: username}, 
             {
@@ -38,8 +34,31 @@ router.post('/api/user/create', async (req, res) => {
     }; 
 });
 
+// route to save changes  
+router.patch('/api/user/save/:username/:taskflowId', async (req, res) => { 
+    const {username, taskflowId} = req.params;
+    const {pending, doing, closed} = req.body; 
+    try {
+        await User.findOneAndUpdate(
+            { username: username, "taskflows.id": taskflowId },  
+            {
+                $set: {
+                    "taskflows.$.pending": pending,
+                    "taskflows.$.doing": doing,
+                    "taskflows.$.closed": closed
+                }
+            },
+            { new: true }  
+        );
+        res.status(200).json({message: "Changes Saved Succesfully!"});
+    } catch (err) {
+        console.error('Error saving changes, err'); 
+        res.status(500).json({error: "An error occured while saving the TaskFlow"}); 
+    }
+});
+
 // get request to retrieve user taskflows
-router.get('/api/user/taskflows', tokenVerify, async (req, res) => {
+router.get('/api/user/taskflows', async (req, res) => {
     const {username, email} = req.query; 
     try {
         const user = await User.findOne({username: username, email: email}); 
