@@ -12,7 +12,7 @@ const taskflowSchema = new mongoose.Schema({
     // consider adding functionality later to allow users to create their own categories to sort their tasks 
     author: String, 
     dob: String, // when the TaskFlow was created (this data will either be private of public, decide later)
-    collaborators: [collaboratorSchema.schema] // other people who can see these tasks 
+    collaborators: {type: [collaboratorSchema.schema], default: []} // other people who can see these tasks 
 }); 
 
 module.exports = mongoose.model('TaskFlow', taskflowSchema); 

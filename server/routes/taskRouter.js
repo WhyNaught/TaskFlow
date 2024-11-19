@@ -5,12 +5,13 @@ const User = require('../schemas/userSchema');
 // post request to add user tasks to database when created 
 router.post('/api/user/create', async (req, res) => {
     const {name, description, username} = req.body; 
+    const id = Date.now(); 
     try {
         const result = await User.updateOne({username: username}, 
             {
             $push: {
                 taskflows: {
-                    id: Date.now(), // generates a unique ID 
+                    id: id, // generates a unique ID 
                     name: name,
                     description: description,
                     author: username, 

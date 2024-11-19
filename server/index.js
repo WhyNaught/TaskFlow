@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const authrouter = require('../server/routes/authrouter');
 const taskrouter = require('../server/routes/taskRouter');
+const collaboratorRouter = require('../server/routes/collaboratorRouter'); 
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -36,3 +37,4 @@ app.use(cors({
 app.use(express.json()); // allows app to parse json data
 app.use(authrouter);
 app.use(taskrouter); 
+app.use(collaboratorRouter); 
