@@ -6,6 +6,7 @@ export default function TaskFlow({taskflows, authenticated}) {
     const {username, taskflowId} = useParams();
     const endpoint = `http://localhost:3000/api/user/save/${username}/${taskflowId}`;
     const [modal, setModal] = useState(false); // pop up form logic 
+    const [collabModal, setCollabModal] = useState(false); 
     const [newTask, setNewTask] = useState({ // just the task schema 
         id: '',
         name: '', 
@@ -21,6 +22,8 @@ export default function TaskFlow({taskflows, authenticated}) {
     const [pending, setPending] = useState(taskflow.pending ? taskflow.pending : []); 
     const [doing, setDoing] = useState(taskflow.doing ? taskflow.doing : []); 
     const [closed, setClosed] = useState(taskflow.closed ? taskflow.closed : []); 
+    const [collaborator, setCollaborator] = useState(''); 
+    const [editor, setEditor] = useState(false); 
 
     async function handleSaveChange(e) {
         e.preventDefault(); 
@@ -29,6 +32,14 @@ export default function TaskFlow({taskflows, authenticated}) {
             doing: doing, 
             closed: closed
         }); 
+    };
+
+    async function handleShare(e) {
+        e.preventDefault(); 
+        await axios.patch(`http://localhost:3000/api/user/${username}/${taskflowId}/share`, 
+            {collaboratorName: collaborator}, 
+            {editor: editor}
+        ); 
     };
 
     function handleClick(category) {
@@ -84,6 +95,7 @@ export default function TaskFlow({taskflows, authenticated}) {
             <>
                 <h2>{taskflow.name}</h2>
                 <h2>{taskflow.description}</h2>
+                <button onClick = {() => {setCollabModal(true)}}>Share</button>
                 <button onClick={handleSaveChange}>Save changes</button>
                 <h3>Pending tasks</h3>
                 <ul>
@@ -133,6 +145,21 @@ export default function TaskFlow({taskflows, authenticated}) {
                             </label>
                             <button type = 'submit'>Add task!</button>
                             <button onClick={() => setModal(false)}>Cancel</button>
+                        </form>
+                    </div>
+                }
+                {collabModal && 
+                    <div>
+                        <h3>Add new collaborator to {taskflow.name}</h3>
+                        <form onSubmit={handleShare}>
+                            <label>
+                                Collaborator name: <input name = "collabname" type = "text" value = {collaborator} onChange={(e) => {setCollaborator(e.target.value)}}/>
+                            </label>
+                            <select onChange={(e) => setEditor(e.target.value === 'editor')}>
+                                <option value = 'editor'>Editor</option>
+                                <option value = 'viewer'>Viewer</option>
+                            </select>
+                            <button type = 'submit'>Add collaborator</button>
                         </form>
                     </div>
                 }
