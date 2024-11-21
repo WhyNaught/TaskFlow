@@ -51,16 +51,16 @@ router.get('/api/user/shared', async (req, res) => {
         // parse through every user and every one of their taskflows and append
         // whichever ones the collaborator's name shows up in 
         const users = await User.find({
-            "taskflows.collaborators": username
-        });
-
-        console.log(users); 
+            "taskflows.collaborators": {$elemMatch: {username: username}}
+        }); 
 
         users.forEach(user => {
             user.taskflows.forEach(taskflow => {
-                if (taskflow.collaborators.includes(username)) {
-                    sharedFlows.push(taskflow);
-                };
+                taskflow.collaborators.forEach(collaborator => {
+                    if (collaborator.username === username) {
+                        sharedFlows.push(taskflow); 
+                    };
+                });
             });
         });
 
