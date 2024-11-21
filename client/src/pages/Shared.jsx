@@ -36,7 +36,7 @@ export default function Shared ({endpoint, authenticated, username}) {
                 <ul>
                     {sharedFlows.map(flow => {
                         return (
-                            <li>
+                            <li key={flow.id}>
                                 <Link to = {`/${flow.author}/taskflows/${flow.id}`}>
                                     <button>{flow.name}</button>
                                     <p>By: {flow.author}</p>
