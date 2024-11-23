@@ -8,6 +8,6 @@ const userSchema = new mongoose.Schema({
     password: String, 
     taskflows: {type: [taskflowSchema.schema], default: []},
     shared: {type: [taskflowSchema.schema], default: []}
-});
+}); 
 
 module.exports = mongoose.model('User', userSchema);
