@@ -69,6 +69,7 @@ function App() {
               <Route path='/:username/taskflows/create' element = {<Create username = {userData? userData.username : null} endpoint = "http://localhost:3000/api/user/create" authenticated={authenticated}/>}/>
               <Route path='/:username/taskflows/:taskflowId' element = {< TaskFlow taskflows = {taskFlows} authenticated = {authenticated}/>}/>
               <Route path='/:username/shared-with-me' element = {<Shared username = {userData? userData.username : null} authenticated = {authenticated} endpoint = "http://localhost:3000/api/user/shared"/>}/>
+              <Route path="/:username/shared-with-me/:author/:taskflowId" element = {< TaskFlow taskflows = {sharedFlows} authenticated = {authenticated}/>}/> {/* Make sure to pass down sharedflows correctly*/}
           </Routes>
       </Router>
   );

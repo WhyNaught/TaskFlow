@@ -1,8 +1,8 @@
-import {useState} from 'react'; 
+import {useState, useEffect} from 'react'; 
 import {useParams} from 'react-router-dom';
 import axios from 'axios'; 
 
-export default function TaskFlow({taskflows, authenticated}) {
+export default function TaskFlow({taskflows, authenticated}) { // we need to change what data is being passed down here 
     const {username, taskflowId} = useParams();
     const endpoint = `http://localhost:3000/api/user/save/${username}/${taskflowId}`;
     const [modal, setModal] = useState(false); // pop up form logic 
@@ -18,12 +18,18 @@ export default function TaskFlow({taskflows, authenticated}) {
         assigned: [],
         category: ''
     }); 
-    const taskflow = taskflows.find(flow => flow.id === parseInt(taskflowId))
+
+    const taskflow = taskflows.find(flow => flow.id === parseInt(taskflowId)) // this is part of the problem 
     const [pending, setPending] = useState(taskflow.pending ? taskflow.pending : []); 
     const [doing, setDoing] = useState(taskflow.doing ? taskflow.doing : []); 
     const [closed, setClosed] = useState(taskflow.closed ? taskflow.closed : []); 
     const [collaborator, setCollaborator] = useState(''); 
     const [editor, setEditor] = useState(false); 
+
+    // add in a useeffect here for users who the taskflow has been shared with 
+    useEffect(() => {
+
+    }, []); 
 
     async function handleSaveChange(e) {
         e.preventDefault(); 
