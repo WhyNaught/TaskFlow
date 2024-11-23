@@ -1,27 +1,11 @@
-import {useEffect, useState} from 'react'; 
-import axios from 'axios'; 
 import { Navigate, Link } from 'react-router-dom';
 
-export default function Shared ({endpoint, authenticated, username}) {
-    const [sharedFlows, setSharedFlows] = useState([]); 
-    if (authenticated) {
-        useEffect(() => {
-            axios.get(endpoint, {withCredentials: true, params: {
-                username: username
-            }})
-            .then(response => {
-                setSharedFlows(response.data.sharedFlows);
-            })
-            .catch(error => {
-                console.error('Error getting shared taskflows', error); 
-                setSharedFlows([]); 
-            })
-        }, [authenticated]);
-    } else {
+export default function Shared ({authenticated, sharedFlows, username}) {
+    if (!authenticated) {
         return (
-            <Navigate to="/"/>
+            <Navigate to="/" />
         );
-    }; 
+    };
 
     if (sharedFlows.length === 0) {
         return (
@@ -37,7 +21,7 @@ export default function Shared ({endpoint, authenticated, username}) {
                     {sharedFlows.map(flow => {
                         return (
                             <li key={flow.id}>
-                                <Link to = {`/${flow.author}/taskflows/${flow.id}`}>
+                                <Link to = {`/${username}/shared-with-me/${flow.author}/${flow.id}`}>
                                     <button>{flow.name}</button>
                                     <p>By: {flow.author}</p>
                                 </Link>
