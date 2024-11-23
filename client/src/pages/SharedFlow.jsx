@@ -1,10 +1,10 @@
-import {useState, useEffect} from 'react'; 
+import {useState} from 'react'; 
 import {useParams} from 'react-router-dom';
 import axios from 'axios'; 
 
-export default function TaskFlow({taskflows, authenticated}) { // we need to change what data is being passed down here 
-    const {username, taskflowId} = useParams();
-    const endpoint = `http://localhost:3000/api/user/save/${username}/${taskflowId}`;
+export default function SharedFlow({taskflows, authenticated}) { // we need to change what data is being passed down here 
+    const {username, author, taskflowId} = useParams();
+    const endpoint = `http://localhost:3000/api/user/save/${author}/${taskflowId}`;
     const [modal, setModal] = useState(false); // pop up form logic 
     const [collabModal, setCollabModal] = useState(false); 
     const [newTask, setNewTask] = useState({ // just the task schema 
@@ -19,12 +19,20 @@ export default function TaskFlow({taskflows, authenticated}) { // we need to cha
         category: ''
     }); 
 
-    const taskflow = taskflows.find(flow => flow.id === parseInt(taskflowId)) // this is part of the problem 
+    const taskflow = taskflows.find(flow => flow.id === parseInt(taskflowId));
     const [pending, setPending] = useState(taskflow.pending ? taskflow.pending : []); 
     const [doing, setDoing] = useState(taskflow.doing ? taskflow.doing : []); 
     const [closed, setClosed] = useState(taskflow.closed ? taskflow.closed : []); 
     const [collaborator, setCollaborator] = useState(''); 
     const [editor, setEditor] = useState(false); 
+
+    /* come back to this later
+    const collaborators = taskflow.collaborators; 
+    const user = collaborators.forEach(collaborator => {
+        collaborator.name === username
+    });
+    const editorStatus = user.editor;  
+    */ 
 
     async function handleSaveChange(e) {
         e.preventDefault(); 
@@ -37,7 +45,7 @@ export default function TaskFlow({taskflows, authenticated}) { // we need to cha
 
     async function handleShare(e) {
         e.preventDefault(); 
-        await axios.patch(`http://localhost:3000/api/user/${username}/${taskflowId}/share`, 
+        await axios.patch(`http://localhost:3000/api/user/${author}/${taskflowId}/share`, 
             {collaboratorName: collaborator}, 
             {editor: editor}
         ); 

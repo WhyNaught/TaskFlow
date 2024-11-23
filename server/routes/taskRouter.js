@@ -40,15 +40,18 @@ router.post('/api/user/create', async (req, res) => {
 
         try {
             await newTask.save(); 
+            res.status(200).json({message: 'TaskFlow added successfully!'})
         } catch (err) {
             res.status(500).json({error: "Something went wrong", err}); 
         }; 
 
+        /*
         if (result.modifiedCount > 0) {
             res.status(200).json({message: 'TaskFlow added successfully!'});
         } else {
             res.status(404).json({message: 'User not found.'}); 
         }; 
+        */
     } catch (err) {
         console.error('Error adding a new TaskFlow', err);
         res.status(500).json({error: "An error occurred while adding the TaskFlow"});  

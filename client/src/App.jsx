@@ -9,6 +9,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import TaskFlow from './pages/TaskFlow';
 import Shared from './pages/Shared';
+import SharedFlow from './pages/SharedFlow';
 
 // will make dedicated file for this later 
 function About() {
@@ -25,6 +26,7 @@ function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null); 
   const [taskFlows, setTaskFlows] = useState([]); 
+  const [sharedFlows, setSharedFlows] = useState([]); 
   useEffect(() => {
       axios.get('http://localhost:3000/api/user', { withCredentials: true })
         .then(response => {
@@ -55,6 +57,21 @@ function App() {
           });
       }
   }, [authenticated]);
+
+  useEffect(() => {
+    if (authenticated) {
+      axios.get("http://localhost:3000/api/user/shared", {withCredentials: true, params: {
+        username: userData.username
+      }})
+      .then(response => {
+          setSharedFlows(response.data.sharedFlows);
+      })
+      .catch(error => {
+        console.error('Error getting shared taskflows', error); 
+        setSharedFlows([]); 
+      })
+    }; 
+  }, [authenticated, userData]);
   return (
       <Router>
           <nav>
@@ -68,8 +85,8 @@ function App() {
               <Route path='/:username/taskflows' element = {<TaskFlows username = {userData? userData.username : null} authenticated = {authenticated} taskflows = {taskFlows}/>}/>
               <Route path='/:username/taskflows/create' element = {<Create username = {userData? userData.username : null} endpoint = "http://localhost:3000/api/user/create" authenticated={authenticated}/>}/>
               <Route path='/:username/taskflows/:taskflowId' element = {< TaskFlow taskflows = {taskFlows} authenticated = {authenticated}/>}/>
-              <Route path='/:username/shared-with-me' element = {<Shared username = {userData? userData.username : null} authenticated = {authenticated} endpoint = "http://localhost:3000/api/user/shared"/>}/>
-              <Route path="/:username/shared-with-me/:author/:taskflowId" element = {< TaskFlow taskflows = {sharedFlows} authenticated = {authenticated}/>}/> {/* Make sure to pass down sharedflows correctly*/}
+              <Route path='/:username/shared-with-me' element = {<Shared authenticated = {authenticated} sharedFlows={sharedFlows} username = {userData ? userData.username : null}/>}/>
+              <Route path="/:username/shared-with-me/:author/:taskflowId" element = {< SharedFlow taskflows = {sharedFlows} authenticated = {authenticated}/>}/> 
           </Routes>
       </Router>
   );

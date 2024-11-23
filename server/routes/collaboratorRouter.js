@@ -1,6 +1,7 @@
 const express = require('express'); 
 const router = express.Router(); 
 const User = require('../schemas/userSchema'); 
+const TaskFlow = require('../schemas/flowSchema'); 
 
 // patch request to alter the collaborators array for each taskflow 
 // rememebr to add feature later that overrides the editor status of the collaborator 
@@ -13,11 +14,7 @@ router.patch('/api/user/:username/:taskflowId/share', async (req, res) => {
             res.status(404).json({error: "User not found, please check casing, spelling, etc."});
         }; 
 
-        const result = await User.findOne({username: username, "taskflows.id": taskflowId}, {
-            "taskflows.$": 1
-        }); 
-
-        const taskflow = result.taskflows[0];  
+        const taskflow = await TaskFlow.findOne({id: taskflowId});  
         taskflow.collaborators.forEach((coll) => {
             if (coll.username === collaboratorName) {
                 console.log("User already exists"); 
@@ -26,14 +23,12 @@ router.patch('/api/user/:username/:taskflowId/share', async (req, res) => {
         }); 
 
         await User.findOneAndUpdate({username: collaboratorName}, {
-            $push: {
-                shared: taskflow
-            }
+            $push: {shared: taskflow}
         });
 
-        await User.findOneAndUpdate({username: username, "taskflows.id": taskflowId}, 
-            {$push: {"taskflows.$.collaborators": {
-                username: collaboratorName, 
+        await TaskFlow.findOneAndUpdate({id: taskflow.id}, 
+            {$push: {collaborators: {
+                name: collaborator.name, 
                 editor: editor, 
                 email: collaborator.email
             }}}
@@ -53,10 +48,10 @@ router.get('/api/user/shared', async (req, res) => {
         const user = await User.findOne({username: username});
         const sharedFlows = user.shared;  
 
-        res.json({sharedFlows: sharedFlows}); 
+        res.json({sharedFlows: sharedFlows});
         // res.status(200).json({message: "Shared taskflows received successfully"}); 
     } catch (err) {
-        console.error({error: 'Error retrieving shared taskflows'}); 
+        console.error({error: 'Error retrieving shared taskflows', err}); 
         res.status(500).json({error: "Something went wrong whilst trying to receive your shared taskflows"}); 
     };
 });
