@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     email: String, // note that this implementation of email is temporary until we implement google OAuth
     password: String, 
     taskflows: {type: [taskflowSchema.schema], default: []},
-    shared: {type: [taskflowSchema.schema], default: []}
+    shared: {type: [Number], default: []}
 }); 
 
 module.exports = mongoose.model('User', userSchema);

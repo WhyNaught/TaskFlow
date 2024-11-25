@@ -16,19 +16,19 @@ router.patch('/api/user/:username/:taskflowId/share', async (req, res) => {
 
         const taskflow = await TaskFlow.findOne({id: taskflowId});  
         taskflow.collaborators.forEach((coll) => {
-            if (coll.username === collaboratorName) {
+            if (coll.email === collaborator.email) {
                 console.log("User already exists"); 
                 throw new Error('User is already a collaborator'); 
             }; 
         }); 
 
         await User.findOneAndUpdate({username: collaboratorName}, {
-            $push: {shared: taskflow}
+            $push: {shared: taskflowId}
         });
 
         await TaskFlow.findOneAndUpdate({id: taskflow.id}, 
             {$push: {collaborators: {
-                name: collaborator.name, 
+                username: collaborator.name, 
                 editor: editor, 
                 email: collaborator.email
             }}}
@@ -47,9 +47,7 @@ router.get('/api/user/shared', async (req, res) => {
     try {
         const user = await User.findOne({username: username});
         const sharedFlows = user.shared;  
-
         res.json({sharedFlows: sharedFlows});
-        // res.status(200).json({message: "Shared taskflows received successfully"}); 
     } catch (err) {
         console.error({error: 'Error retrieving shared taskflows', err}); 
         res.status(500).json({error: "Something went wrong whilst trying to receive your shared taskflows"}); 
