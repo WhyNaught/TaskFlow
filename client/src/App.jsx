@@ -84,9 +84,9 @@ function App() {
               <Route path='/login' element = {<Login endpoint="http://localhost:3000/api/login"/>}/>
               <Route path='/:username/taskflows' element = {<TaskFlows username = {userData? userData.username : null} authenticated = {authenticated} taskflows = {taskFlows}/>}/>
               <Route path='/:username/taskflows/create' element = {<Create username = {userData? userData.username : null} endpoint = "http://localhost:3000/api/user/create" authenticated={authenticated}/>}/>
-              <Route path='/:username/taskflows/:taskflowId' element = {< TaskFlow taskflows = {taskFlows} authenticated = {authenticated}/>}/>
+              <Route path='/:username/taskflows/:taskflowId' element = {< TaskFlow authenticated = {authenticated}/>}/>
               <Route path='/:username/shared-with-me' element = {<Shared authenticated = {authenticated} sharedFlows={sharedFlows} username = {userData ? userData.username : null}/>}/>
-              <Route path="/:username/shared-with-me/:author/:taskflowId" element = {< SharedFlow taskflows = {sharedFlows} authenticated = {authenticated}/>}/> 
+              <Route path="/:username/shared-with-me/:author/:taskflowId" element = {< SharedFlow authenticated = {authenticated}/>}/> 
           </Routes>
       </Router>
   );
