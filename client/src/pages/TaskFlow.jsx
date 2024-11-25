@@ -2,12 +2,18 @@ import {useState, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
 import axios from 'axios'; 
 
-export default function TaskFlow({taskflows, authenticated}) { // we need to change what data is being passed down here 
+export default function TaskFlow({authenticated}) {
     const {username, taskflowId} = useParams();
     const endpoint = `http://localhost:3000/api/user/save/${username}/${taskflowId}`;
-    const [modal, setModal] = useState(false); // pop up form logic 
-    const [collabModal, setCollabModal] = useState(false); 
-    const [newTask, setNewTask] = useState({ // just the task schema 
+    const [modal, setModal] = useState(false); 
+    const [loading, setLoading] = useState(true); 
+    const [collabModal, setCollabModal] = useState(false);
+    const [pending, setPending] = useState([]); 
+    const [doing, setDoing] = useState([]); 
+    const [closed, setClosed] = useState([]); 
+    const [collaborator, setCollaborator] = useState(''); 
+    const [editor, setEditor] = useState(false);  
+    const [newTask, setNewTask] = useState({ 
         id: '',
         name: '', 
         description: '', 
@@ -19,12 +25,25 @@ export default function TaskFlow({taskflows, authenticated}) { // we need to cha
         category: ''
     }); 
 
-    const taskflow = taskflows.find(flow => flow.id === parseInt(taskflowId)) // this is part of the problem 
-    const [pending, setPending] = useState(taskflow.pending ? taskflow.pending : []); 
-    const [doing, setDoing] = useState(taskflow.doing ? taskflow.doing : []); 
-    const [closed, setClosed] = useState(taskflow.closed ? taskflow.closed : []); 
-    const [collaborator, setCollaborator] = useState(''); 
-    const [editor, setEditor] = useState(false); 
+    const [taskflow, setTaskFlow] = useState(''); 
+    useEffect(() => {
+        const fetchTaskFlow = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3000/api/user/taskflow`, { params: { taskflowId } });
+                const fetchedTaskflow = response.data.taskflow;
+                setTaskFlow(fetchedTaskflow);
+                setPending(fetchedTaskflow.pending || []);
+                setDoing(fetchedTaskflow.doing || []);
+                setClosed(fetchedTaskflow.closed || []);
+            } catch (err) {
+                console.error('Something went wrong', err);
+            } finally {
+                setLoading(false); 
+            }; 
+        };
+    
+        fetchTaskFlow();
+    }, [taskflowId]);
 
     async function handleSaveChange(e) {
         e.preventDefault(); 
@@ -91,7 +110,11 @@ export default function TaskFlow({taskflows, authenticated}) { // we need to cha
         setModal(false); 
     };
 
-    if (authenticated) {
+    if (loading) {
+        return (
+            <h2>Loading...</h2>
+        );
+    } else if (authenticated) {
         return (
             <>
                 <h2>{taskflow.name}</h2>
