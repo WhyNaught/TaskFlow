@@ -1,4 +1,4 @@
-import {useState} from 'react'; 
+import {useState, useEffect} from 'react'; 
 import {useParams} from 'react-router-dom';
 import axios from 'axios'; 
 
@@ -19,7 +19,18 @@ export default function SharedFlow({taskflows, authenticated}) { // we need to c
         category: ''
     }); 
 
-    const taskflow = taskflows.find(flow => flow.id === parseInt(taskflowId));
+    const [taskflow, setTaskFlow] = useState(null); 
+
+    useEffect(() => {
+        axios.get(`http://localhost:3000/api/${taskflowId}`)
+            .then(response => {
+                setTaskFlow(response.data); 
+            })
+            .catch(error => {
+                console.error('Something went wrong', err); 
+            }); 
+    }, []); 
+
     const [pending, setPending] = useState(taskflow.pending ? taskflow.pending : []); 
     const [doing, setDoing] = useState(taskflow.doing ? taskflow.doing : []); 
     const [closed, setClosed] = useState(taskflow.closed ? taskflow.closed : []); 
