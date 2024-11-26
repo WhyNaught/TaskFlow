@@ -23,62 +23,74 @@ function About() {
 
 // renders the navbar and all the browser routes
 function App() {
-    const [userData, setUserData] = useState(null); 
-    const [sharedFlows, setSharedFlows] = useState([]); 
-    const [loading, setLoading] = useState(true); 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:3000/api/user', { withCredentials: true }); 
-                setUserData(response.data); 
-            } catch (err) {
-                console.error('Error fetching user data', err); 
-            }
-        }; 
-        fetchData(); 
-      }, []);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [userData, setUserData] = useState(null); 
+  const [taskFlows, setTaskFlows] = useState([]); 
+  const [sharedFlows, setSharedFlows] = useState([]); 
+  useEffect(() => {
+      axios.get('http://localhost:3000/api/user', { withCredentials: true })
+        .then(response => {
+          setUserData(response.data);
+          setAuthenticated(true);  
+        })
+        .catch(error => {
+          console.error('Error fetching user data', error);
+          setAuthenticated(false);
+        });
+    }, []);
 
-    useEffect(() => {
-      const fetchShared = async () => {
-          if (userData) {
-              try {
-                  const response = await axios.get("http://localhost:3000/api/user/shared", {withCredentials: true, params: {
-                    username: userData.username
-                  }}); 
-                  setSharedFlows(response.data.sharedFlows); 
-              } catch (err) {
-                  console.error('Error fetching shared flows', err); 
-              } finally {
-                  setLoading(false); 
-              };  
-          }; 
-      }; 
-      fetchShared(); 
-    }, [userData]); 
+  useEffect(() => {
+      if (authenticated) {
+        axios.get('http://localhost:3000/api/user/taskflows', 
+          { 
+              withCredentials: true, 
+              params: {
+                  username: userData.username, 
+                  email: userData.email
+              }
+          })
+          .then(response => {
+            setTaskFlows(response.data.taskflows); 
+          })
+          .catch(error => {
+            console.error('Error fetching taskflows data', error);
+          });
+      }
+  }, [authenticated]);
 
-    if (loading) {
-        return (
-            <h2>Loading...</h2>
-        ); 
+  useEffect(() => {
+    if (authenticated) {
+      axios.get("http://localhost:3000/api/user/shared", {withCredentials: true, params: {
+        username: userData.username
+      }})
+      .then(response => {
+          setSharedFlows(response.data.sharedFlows);
+      })
+      .catch(error => {
+        console.error('Error getting shared taskflows', error); 
+        setSharedFlows([]); 
+      })
     }; 
-    return (
-        <Router>   
-            <nav>
-                <Link to="/">Home</Link> | <Link to="/register">Register</Link> | <Link to="/about">About</Link> | <Link to="/login">Login</Link> 
-            </nav>
-            <Routes>
-                <Route path="/" element={<Home userData = {userData ? userData : null}/>} />
-                <Route path="/register" element={<Register endpoint="http://localhost:3000/api/register" />} />
-                <Route path="/about" element={<About />} />
-                <Route path='/login' element = {<Login endpoint="http://localhost:3000/api/login"/>}/>
-                <Route path='/:username/taskflows' element = {<TaskFlows userData = {userData? userData : null} />}/>
-                <Route path='/:username/taskflows/create' element = {<Create userData = {userData? userData : null} endpoint = "http://localhost:3000/api/user/create" />}/>
-                <Route path='/:username/taskflows/:taskflowId' element = {< TaskFlow />}/>
-                <Route path='/:username/shared-with-me' element = {<Shared userData = {userData ? userData : null}/>}/>
-                <Route path="/:username/shared-with-me/:author/:taskflowId" element = {< SharedFlow sharedFlows = {sharedFlows ? sharedFlows : []} userData = {userData ? userData : null}/>}/> 
-            </Routes>
-        </Router>
-    );
+  }, [authenticated, userData]);
+  return (
+      <Router>
+          <nav>
+              <Link to="/">Home</Link> | <Link to="/register">Register</Link> | <Link to="/about">About</Link> | <Link to="/login">Login</Link> 
+          </nav>
+          <Routes>
+              <Route path="/" element={<Home username = {userData ? userData.username : null} authenticated={authenticated} id = {userData ? userData.username : null}/>} />
+              <Route path="/register" element={<Register endpoint="http://localhost:3000/api/register" />} />
+              <Route path="/about" element={<About />} />
+              <Route path='/login' element = {<Login endpoint="http://localhost:3000/api/login"/>}/>
+              <Route path='/:username/taskflows' element = {<TaskFlows username = {userData? userData.username : null} authenticated = {authenticated} taskflows = {taskFlows}/>}/>
+              <Route path='/:username/taskflows/create' element = {<Create username = {userData? userData.username : null} endpoint = "http://localhost:3000/api/user/create" authenticated={authenticated}/>}/>
+              <Route path='/:username/taskflows/:taskflowId' element = {< TaskFlow authenticated = {authenticated}/>}/>
+              <Route path='/:username/shared-with-me' element = {<Shared authenticated = {authenticated} sharedFlows={sharedFlows} username = {userData ? userData.username : null}/>}/>
+              <Route path="/:username/shared-with-me/:author/:taskflowId" element = {< SharedFlow authenticated = {authenticated}/>}/> 
+          </Routes>
+      </Router>
+  );
 }
 
+// exports our app to our main.jsx file
 export default App;

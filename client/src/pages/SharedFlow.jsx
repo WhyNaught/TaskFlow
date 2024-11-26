@@ -119,6 +119,34 @@ export default function SharedFlow({authenticated}) {
         setModal(false); 
     };
 
+    function handleUp(id, category) {
+        if (category === 'pending') {
+            return; 
+        } else if (category === 'doing') {
+            const task = doing.find(task => task.id === id); 
+            setDoing(doing.filter(task => task.id !== id)); 
+            setPending([...pending, task]); 
+        } else {
+            const task = closed.find(task => task.id === id); 
+            setClosed(closed.filter(task => task.id !== id)); 
+            setDoing([...doing, task]); 
+        }; 
+    };  
+
+    function handleDown(id, category) {
+        if (category === 'pending') {
+            const task = pending.find(task => task.id === id); 
+            setPending(pending.filter(task => task.id !== id)); 
+            setDoing([...doing, task]); 
+        } else if (category === 'doing') {
+            const task = doing.find(task => task.id === id); 
+            setDoing(doing.filter(task => task.id !== id)); 
+            setClosed([...closed, task]); 
+        } else {
+            return; 
+        }; 
+    };
+
     if (loading) {
         return (
             <h2>Loading...</h2>
@@ -138,6 +166,8 @@ export default function SharedFlow({authenticated}) {
                             <p>{task.description}</p>
                             <button>Edit Task</button>
                             <button onClick = {() => deleteTask(task.id, 'pending')}>Delete Task</button>
+                            <button onClick = {() => handleUp(task.id, 'pending')}>⬆️</button>
+                            <button onClick = {() => handleDown(task.id, 'pending')}>⬇️</button>
                         </li>
                     ))}
                 </ul>
@@ -150,6 +180,8 @@ export default function SharedFlow({authenticated}) {
                             <p>{task.description}</p>
                             <button>Edit Task</button>
                             <button onClick = {() => deleteTask(task.id, 'doing')}>Delete Task</button>
+                            <button onClick = {() => handleUp(task.id, 'doing')}>⬆️</button>
+                            <button onClick = {() => handleDown(task.id, 'doing')}>⬇️</button>
                         </li>
                     ))}
                 </ul>
@@ -162,6 +194,8 @@ export default function SharedFlow({authenticated}) {
                             <p>{task.description}</p>
                             <button>Edit Task</button>
                             <button onClick = {() => deleteTask(task.id, 'closed')}>Delete Task</button>
+                            <button onClick = {() => handleUp(task.id, 'closed')}>⬆️</button>
+                            <button onClick = {() => handleDown(task.id, 'closed')}>⬇️</button>
                         </li>
                     ))}
                 </ul>

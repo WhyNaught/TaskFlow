@@ -2,7 +2,13 @@ import axios from 'axios';
 import {useState, useEffect} from 'react'; 
 import { Navigate, Link } from 'react-router-dom';
 
-export default function Shared ({sharedFlows, userData}) {
+export default function Shared ({authenticated, sharedFlows, username}) {
+    if (!authenticated) {
+        return (
+            <Navigate to="/" />
+        );
+    };
+
     const [flows, setFlows] = useState([]); 
 
     useEffect(() => {
@@ -28,7 +34,7 @@ export default function Shared ({sharedFlows, userData}) {
                     {flows.map((flow) => {
                         return (
                             <li key={flow.taskflow.id}>
-                                <Link to = {`/${userData.username}/shared-with-me/${flow.taskflow.author}/${flow.taskflow.id}`}>
+                                <Link to = {`/${username}/shared-with-me/${flow.taskflow.author}/${flow.taskflow.id}`}>
                                     <button>{flow.taskflow.name}</button>
                                     <p>By: {flow.taskflow.author}</p>
                                 </Link>
