@@ -1,0 +1,43 @@
+services:
+  frontend:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: taskflow_client
+    ports: 
+      - "5173:5173"
+    networks:
+      - app-network
+
+  backend:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: taskflow_server
+    env_file:
+      - ./server/.env
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo
+    volumes:
+      - data-volume:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  data-volume:
+  node_modules:
+  web-root:
+    driver: local

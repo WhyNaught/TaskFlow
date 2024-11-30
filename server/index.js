@@ -24,7 +24,7 @@ if (process.env.STATUS === 'production') {
 }; 
 
 // starting app
-app.listen(port, 'localhost', () => {
+app.listen(port, '0.0.0.0', () => {
     console.log('Started on port ' + port); 
 });
 
